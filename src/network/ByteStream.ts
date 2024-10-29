@@ -1,4 +1,4 @@
-type ByteArray = Buffer | Uint8Array | number[] | string;
+export type ByteArray = Buffer | Uint8Array | number[] | string;
 
 class ByteStream {
   private _data: Buffer;
