@@ -42,21 +42,20 @@ abstract class GamePacket {
 
 class UnknownPacket extends GamePacket {
   public ID!: GamePacketID;
-  public packetLength!: number;
-  public buffer!: Buffer;
+  public length!: number;
+  public buffer!: Uint8Array;
 
   protected readPacket(byteStream: ByteStream) {
     this.ID = byteStream.readByte();
-    this.packetLength = byteStream.readByte();
-    this.buffer = byteStream.readBytes();
+    this.length = byteStream.readByte();
+    this.buffer = new Uint8Array(byteStream.readBytes());
   }
 
   protected writePacket(byteStream: ByteStream) {
     byteStream.writeByte(this.ID);
-    byteStream.writeByte(this.packetLength);
+    byteStream.writeByte(this.length);
     byteStream.writeBytes(this.buffer);
   }
 }
 
 export default GamePacket;
-export { UnknownPacket };
