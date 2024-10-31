@@ -18,13 +18,7 @@ class Connection {
     this._socket.on("data", this.handlePacket);
 
     //handShake
-    const serverInfo = S2C_ServerInfo.from(
-      [
-        0x01, 0x16, 0x10, 0x99, 0x00, 0xd0, 0xd0, 0x00, 0x00, 0x00, 0x00, 0xc2, 0xfe, 0xa5, 0x73, 0xbf, 0x6f, 0x80, 0xd7, 0x00, 0x01, 0x02, 0x06,
-        0xff,
-      ],
-      GamePacketList
-    );
+    const serverInfo = new S2C_ServerInfo(0x00, 0xd0);
     this.sendPacket(serverInfo);
   }
 
@@ -33,15 +27,17 @@ class Connection {
   }
 
   public sendPacket(packet: GamePacket) {
+    console.log("SENDING", packet);
+
     this._socket.write(packet.getBytes());
   }
 
   public broadcastPacket() {}
 
   public handlePacket(data: Buffer) {
-    const packet: GamePacket = GamePacket.from(data, GamePacketList);
+    const receivedPacket: GamePacket = GamePacket.from(data, GamePacketList);
 
-    console.log("packetReceived", packet);
+    console.log("RECEIVING", receivedPacket);
   }
 }
 
