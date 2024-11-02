@@ -1,55 +1,27 @@
 import { Server, Socket } from "net";
-import GamePacket from "../Packets/GamePacket";
-import GamePacketList from "../Packets/GamePacketList";
-import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
+import Connection from "./ConnectionHandler";
+import PacketRouter from "./PacketRouter";
 
-class Connection {
-  private readonly _clientId: number;
-  private readonly _socket: Socket;
-  private readonly _peers: Connection[];
-  private _isCompressed = false;
-  private _isEncrypted = false;
-
-  constructor(clientId: number, socket: Socket, peers: Connection[]) {
-    this._clientId = clientId;
-    this._socket = socket;
-    this._peers = peers;
-
-    this._socket.on("data", this.handlePacket);
-
-    //handShake
-    const serverInfo = new S2C_ServerInfo(0x00, 0xd0);
-    this.sendPacket(serverInfo);
-  }
-
-  public get clientId() {
-    return this._clientId;
-  }
-
-  public sendPacket(packet: GamePacket) {
-    console.log("SENDING", packet);
-
-    this._socket.write(packet.getBytes());
-  }
-
-  public broadcastPacket() {}
-
-  public handlePacket(data: Buffer) {
-    const receivedPacket: GamePacket = GamePacket.from(data, GamePacketList);
-
-    console.log("RECEIVING", receivedPacket);
-  }
-}
+import HandleLoginAnnounce from "../Packets/PacketHandlers/HandleLoginAnnounce";
 
 class NetworkHandler {
   private _server: Server;
   private _peers: Connection[] = [];
+  private _requestHandler: PacketRouter;
 
   constructor(tcpServer: Server) {
     this._server = tcpServer;
 
     this._server.on("error", this.handleServerError);
     this._server.on("connection", this.handleConnection.bind(this));
+
+    this._requestHandler = new PacketRouter();
+
+    this.initializePacketHandlers();
+  }
+
+  private initializePacketHandlers() {
+    this._requestHandler.Register(new HandleLoginAnnounce());
   }
 
   private get peers() {
@@ -68,7 +40,7 @@ class NetworkHandler {
     clientSocket.on("close", (hadError) => this.handleDisconnection(clientId, hadError));
 
     console.log("Client connected");
-    this._peers.push(new Connection(clientId, clientSocket, filteredPeers));
+    this._peers.push(new Connection(clientId, clientSocket, filteredPeers, this._requestHandler));
   }
 
   private handleDisconnection(clientId: number, hadError: boolean) {
