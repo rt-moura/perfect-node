@@ -1,5 +1,6 @@
 import net from "net";
 import NetworkHandler from "./network/Handlers/NetworkHandler";
+import PacketRouter from "./network/Handlers/PacketRouter";
 import config from "./config.json";
 
 class GameServer {
@@ -8,17 +9,10 @@ class GameServer {
   private _port: number;
   private _networkHandler!: NetworkHandler;
 
-  private constructor() {
+  constructor() {
     this._port = config.port;
 
     this.setupNetwork();
-  }
-
-  static getInstance() {
-    if (this._instance) return this._instance;
-
-    this._instance = new GameServer();
-    return this._instance;
   }
 
   private setupNetwork() {
@@ -28,4 +22,4 @@ class GameServer {
   }
 }
 
-GameServer.getInstance();
+new GameServer();

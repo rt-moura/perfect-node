@@ -2,46 +2,36 @@ import { Socket } from "net";
 import GamePacket from "../Packets/GamePacket";
 import GamePacketList from "../Packets/GamePacketList";
 import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
-import PacketRouter from "./PacketRouter";
+
+type packetHandlerType = (clientId: number, packet: GamePacket) => void;
 
 class Connection {
   private readonly _clientId: number;
   private readonly _socket: Socket;
-  private readonly _peers: Connection[];
-  private readonly _requestHandler: PacketRouter;
+  private readonly _packetHandlerCllbk: packetHandlerType;
   private _isCompressed = false;
   private _isEncrypted = false;
 
-  constructor(clientId: number, socket: Socket, peers: Connection[], requestHandler: PacketRouter) {
+  constructor(clientId: number, socket: Socket, handlePacketCllbk: packetHandlerType) {
     this._clientId = clientId;
     this._socket = socket;
-    this._peers = peers;
-    this._requestHandler = requestHandler;
+    this._packetHandlerCllbk = handlePacketCllbk;
 
     this._socket.on("data", this.handlePacket.bind(this));
-
-    //Hand Shake between client and server
-    const serverInfo = new S2C_ServerInfo(0x00, 0xd0);
-    this.sendPacket(serverInfo);
   }
 
   public get clientId() {
     return this._clientId;
   }
 
-  public sendPacket(packet: GamePacket) {
-    console.log("SENDING", packet);
-
-    this._socket.write(packet.getBytes());
+  public send(data: Buffer) {
+    this._socket.write(data);
   }
 
-  public broadcastPacket() {}
+  private handlePacket(data: Buffer) {
+    const packet = GamePacket.from(data, GamePacketList);
 
-  public handlePacket(data: Buffer) {
-    const packet: GamePacket = GamePacket.from(data, GamePacketList);
-
-    console.log("RECEIVING", packet);
-    this._requestHandler.onMessage(this._clientId, packet);
+    this._packetHandlerCllbk(this._clientId, packet);
   }
 }
 
