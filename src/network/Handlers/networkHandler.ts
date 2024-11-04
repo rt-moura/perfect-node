@@ -5,11 +5,12 @@ import PacketRouter from "./PacketRouter";
 
 import HandleLoginAnnounce from "../Packets/PacketHandlers/HandleLoginAnnounce";
 import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
+import C2S_LoginAnnounce from "../Packets/C2S/C2S_LoginAnnounce";
 
 class NetworkHandler {
   private _server: Server;
   private _peers: Map<number, Connection> = new Map();
-  private static readonly _requestHandler: PacketRouter = new PacketRouter();
+  private readonly _requestHandler: PacketRouter = new PacketRouter();
 
   constructor(tcpServer: Server) {
     this._server = tcpServer;
@@ -20,8 +21,12 @@ class NetworkHandler {
     this.initPacketHandlers();
   }
 
+  public getConnection(clientId: number) {
+    return this._peers.get(clientId);
+  }
+
   private initPacketHandlers() {
-    NetworkHandler._requestHandler.Register(new HandleLoginAnnounce());
+    this._requestHandler.Register(new HandleLoginAnnounce());
   }
 
   public sendPacket(clientId: number, packet: GamePacket) {
@@ -38,10 +43,10 @@ class NetworkHandler {
     });
   }
 
-  public handlePacket(clientId: number, packet: GamePacket) {
+  private handlePacket(clientId: number, packet: GamePacket) {
     console.log("RECEIVING", packet);
 
-    NetworkHandler._requestHandler.onMessage(clientId, packet);
+    this._requestHandler.onMessage(clientId, packet);
   }
 
   private handleConnection(clientSocket: Socket) {
@@ -51,7 +56,7 @@ class NetworkHandler {
     clientSocket.on("close", (hadError) => this.handleDisconnection(clientId, hadError));
 
     console.log("Client connected");
-    this._peers.set(clientId, new Connection(clientId, clientSocket, this.handlePacket));
+    this._peers.set(clientId, new Connection(clientId, clientSocket, this.handlePacket.bind(this)));
 
     //Sends a serverInfo packet as a handshake between client and server
     //@TODO: Unhardcode serverInfo values/packet from this method

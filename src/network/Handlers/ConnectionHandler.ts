@@ -1,7 +1,6 @@
 import { Socket } from "net";
 import GamePacket from "../Packets/GamePacket";
 import GamePacketList from "../Packets/GamePacketList";
-import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
 
 type packetHandlerType = (clientId: number, packet: GamePacket) => void;
 

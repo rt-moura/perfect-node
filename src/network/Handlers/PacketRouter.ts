@@ -10,16 +10,17 @@ class PacketRouter {
       return;
     }
 
-    this._handlers.set(typeof handler, handler);
+    this._handlers.set(handler.name, handler);
   }
 
   public onMessage<T extends GamePacket>(clientId: number, req: T) {
-    const handler = this._handlers.get(typeof req);
+    const packetName = req.constructor.name;
+    const handler = this._handlers.get(packetName);
 
     if (handler) {
       handler.handlePacket(clientId, req);
     } else {
-      console.log(`No handler found for packet type ${req.constructor.name}`);
+      console.log(`No handler found for ${packetName} (ID: 0x${req.ID.toString(16).toUpperCase()})`);
     }
   }
 }
