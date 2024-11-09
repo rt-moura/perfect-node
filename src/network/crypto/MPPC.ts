@@ -161,3 +161,5 @@ class BitStream {
     if (pad_length > 0) this.WriteBits(0, pad_length);
   }
 }
+
+export default MPPC;

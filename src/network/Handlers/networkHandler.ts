@@ -5,7 +5,6 @@ import PacketRouter from "./PacketRouter";
 
 import HandleLoginAnnounce from "../Packets/PacketHandlers/HandleLoginAnnounce";
 import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
-import C2S_LoginAnnounce from "../Packets/C2S/C2S_LoginAnnounce";
 
 class NetworkHandler {
   private _server: Server;

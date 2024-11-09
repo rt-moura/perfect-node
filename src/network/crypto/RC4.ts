@@ -23,19 +23,18 @@ class RC4 {
     }
   }
 
-  public encode(dataB: Uint8Array, size: number) {
-    const data = dataB.slice(0, size);
-    const cipher = new Uint8Array(data.length);
+  public encode(dataB: Uint8Array) {
+    const cipher = new Uint8Array(dataB.length);
 
-    for (let m = 0; m < data.length; m++) {
-      cipher[m] = data[m] ^ this.keyItem();
+    for (let m = 0; m < dataB.length; m++) {
+      cipher[m] = dataB[m] ^ this.keyItem();
     }
 
     return cipher;
   }
 
-  public decode(dataB: Uint8Array, size: number) {
-    return this.encode(dataB, size);
+  public decode(dataB: Uint8Array) {
+    return this.encode(dataB);
   }
 
   private keyItem(): number {
