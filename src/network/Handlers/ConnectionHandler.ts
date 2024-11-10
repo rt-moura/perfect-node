@@ -61,8 +61,8 @@ class Connection {
     let _data = data;
 
     if (this._isServerEncrypted) {
-      _data = Buffer.from(this._serverEncryption.encode(_data));
       _data = Buffer.from(this._compressor.Compress(_data));
+      _data = Buffer.from(this._serverEncryption.encode(_data));
     }
 
     this._socket.write(_data);
