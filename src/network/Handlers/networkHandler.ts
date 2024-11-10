@@ -21,7 +21,11 @@ class NetworkHandler {
   }
 
   public getConnection(clientId: number) {
-    return this._peers.get(clientId);
+    const peer = this._peers.get(clientId);
+
+    if (peer == undefined) throw new Error(`Connection with clientId [${clientId}] is undefined`);
+
+    return peer;
   }
 
   private initPacketHandlers() {
