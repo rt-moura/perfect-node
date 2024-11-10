@@ -9,9 +9,9 @@ class HandleLoginAnnounce implements IPacketHandler<C2S_LoginAnnounce> {
   }
 
   public handlePacket(clientId: number, req: C2S_LoginAnnounce): void {
-    console.log("LoginAnnounce received");
-
     const SMKey = new S2C_SMKey();
+
+    GameServer.networkHandler.getConnection(clientId).setClientDecryption(req.username, req.passwordHash, SMKey.key);
     GameServer.networkHandler.sendPacket(clientId, SMKey);
   }
 }
