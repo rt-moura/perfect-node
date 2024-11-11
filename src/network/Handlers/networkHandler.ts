@@ -6,6 +6,7 @@ import PacketRouter from "./PacketRouter";
 import S2C_ServerInfo from "../Packets/S2C/S2C_ServerInfo";
 import HandleLoginAnnounce from "../Packets/PacketHandlers/HandleLoginAnnounce";
 import HandleCMKey from "../Packets/PacketHandlers/HandleCMKey";
+import HandleKeepAlive from "../Packets/PacketHandlers/HandleKeepAlive";
 
 class NetworkHandler {
   private _server: Server;
@@ -32,6 +33,7 @@ class NetworkHandler {
   private initPacketHandlers() {
     this._requestHandler.Register(new HandleLoginAnnounce());
     this._requestHandler.Register(new HandleCMKey());
+    this._requestHandler.Register(new HandleKeepAlive());
   }
 
   public sendPacket(clientId: number, packet: GamePacket) {
