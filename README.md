@@ -9,7 +9,7 @@ Um emulador dos servidores oficiais de Perfect World v1.2.6 escrito em TypeScrip
 
 ## Rede
 - O tráfego de rede para a troca de pacotes entre servidor e cliente em sua maior parte é comprimido e criptografado, usando os algoritmos MPPC (Microsoft-Point-to-Point-Compression) e RC4 (cifra simétrica) respectivamente.
-- O servidor comprime e cifra os dados enviados para o cliente, que faz o processo reverso para processa-los, e este apenas cifra os dados que são enviados ao servidor, sem compressão.
+- O servidor comprime e cifra os dados enviados para o cliente, que faz o inverso para processa-los, e este apenas cifra os dados que são enviados ao servidor, sem compressão.
 - A chave RC4 é calculada apartir de um HMACMD5 que tem como chave o *login* do usuário e como mensagem parametros como: *passwordHash*, *serverKey* e *clientKey*.
 
 ## Dependências
