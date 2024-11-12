@@ -35,6 +35,13 @@ class ByteStream {
     }
   }
 
+  public readInt(): number {
+    const number = this._data.readInt32BE();
+    this._data = this._data.subarray(4);
+
+    return number;
+  }
+
   public writeByte(value: number): void {
     value = value & 0xff;
 
@@ -46,6 +53,14 @@ class ByteStream {
     const tmpBuffer = Buffer.from(buffer);
     const totalLength = tmpBuffer.length + this._data.length;
     this._data = Buffer.concat([this._data, tmpBuffer], totalLength);
+  }
+
+  public writeInt(value: number): void {
+    value = value & 0xffffffff;
+
+    const tmpBuffer = Buffer.allocUnsafe(4);
+    tmpBuffer.writeInt32BE(value);
+    this._data = Buffer.concat([this._data, tmpBuffer], this._data.length + tmpBuffer.length);
   }
 }
 
