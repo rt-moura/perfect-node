@@ -30,18 +30,17 @@ class S2C_OnlineAnnounce extends GamePacket {
   protected writePacket(byteStream: ByteStream): void {
     byteStream.writeByte(this.ID);
 
-    //@TODO: use ByteStream.WriteInt instead this is very tricky
-    const buffer = Buffer.allocUnsafe(this.length);
-    buffer.writeInt32BE(this.userid);
-    buffer.writeInt32BE(this.localsid, 4);
-    buffer.writeInt32BE(this.remainTime, 8);
-    buffer.writeUint8(this.zoneid, 12);
-    buffer.writeInt32BE(this.freeTimeLeft, 13);
-    buffer.writeInt32BE(this.freeTimeEnd, 17);
-    buffer.writeInt32BE(this.createTime, 21);
+    const buffer = new ByteStream();
+    buffer.writeInt(this.userid);
+    buffer.writeInt(this.localsid);
+    buffer.writeInt(this.remainTime);
+    buffer.writeByte(this.zoneid);
+    buffer.writeInt(this.freeTimeLeft);
+    buffer.writeInt(this.freeTimeEnd);
+    buffer.writeInt(this.createTime);
 
     byteStream.writeByte(buffer.length);
-    byteStream.writeBytes(buffer);
+    byteStream.writeBytes(buffer.readBytes());
   }
 }
 

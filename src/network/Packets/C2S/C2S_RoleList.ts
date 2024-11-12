@@ -11,21 +11,21 @@ class C2S_RoleList extends GamePacket {
   protected readPacket(byteStream: ByteStream): void {
     const id = byteStream.readByte();
     const length = byteStream.readByte();
-    this.userid = byteStream.readBytes(4).readInt32BE();
-    this.unknown = byteStream.readBytes(4).readInt32BE();
-    this.slot = byteStream.readBytes(4).readInt32BE();
+    this.userid = byteStream.readInt();
+    this.unknown = byteStream.readInt();
+    this.slot = byteStream.readInt();
   }
 
   protected writePacket(byteStream: ByteStream): void {
     byteStream.writeByte(this.ID);
 
-    const buffer = Buffer.allocUnsafe(12);
-    buffer.writeInt32BE(this.userid);
-    buffer.writeInt32BE(this.unknown, 4);
-    buffer.writeInt32BE(this.slot, 8);
+    const buffer = new ByteStream();
+    buffer.writeInt(this.userid);
+    buffer.writeInt(this.unknown);
+    buffer.writeInt(this.slot);
 
     byteStream.writeByte(buffer.length);
-    byteStream.writeBytes(buffer);
+    byteStream.writeBytes(buffer.readBytes());
   }
 }
 
