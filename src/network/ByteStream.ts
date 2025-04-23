@@ -1,67 +1,67 @@
-export type ByteArray = Buffer | Uint8Array | number[] | string;
+export type ByteArray = any;
 
 class ByteStream {
-  private _data: Buffer;
+	private _data: Buffer;
 
-  constructor(buffer?: ByteArray) {
-    this._data = Buffer.from(buffer ? buffer : []);
-  }
+	constructor(buffer?: ByteArray) {
+		this._data = Buffer.from(buffer ? buffer : []);
+	}
 
-  public get length(): number {
-    return this._data.length;
-  }
+	public get length(): number {
+		return this._data.length;
+	}
 
-  public readByte(): number {
-    const byte = this._data.readUint8();
-    this._data = this._data.subarray(1);
+	public readByte(): number {
+		const byte = this._data.readUint8();
+		this._data = this._data.subarray(1);
 
-    return byte;
-  }
+		return byte;
+	}
 
-  public readBytes(count?: number): Buffer {
-    if (count) {
-      if (count > this._data.length) throw new RangeError("Attempt to access memory outside buffer bounds");
-      if (count < 1) return Buffer.from([]);
+	public readBytes(count?: number): Buffer {
+		if (count) {
+			if (count > this._data.length) throw new RangeError("Attempt to access memory outside buffer bounds");
+			if (count < 1) return Buffer.from([]);
 
-      const bytes = this._data.subarray(0, count);
-      this._data = this._data.subarray(count);
+			const bytes = this._data.subarray(0, count);
+			this._data = this._data.subarray(count);
 
-      return bytes;
-    } else {
-      const bytes = this._data.subarray();
-      this._data = this._data.subarray(bytes.length);
+			return bytes;
+		} else {
+			const bytes = this._data.subarray();
+			this._data = this._data.subarray(bytes.length);
 
-      return bytes;
-    }
-  }
+			return bytes;
+		}
+	}
 
-  public readInt(): number {
-    const number = this._data.readInt32BE();
-    this._data = this._data.subarray(4);
+	public readInt(): number {
+		const number = this._data.readInt32BE();
+		this._data = this._data.subarray(4);
 
-    return number;
-  }
+		return number;
+	}
 
-  public writeByte(value: number): void {
-    value = value & 0xff;
+	public writeByte(value: number): void {
+		value = value & 0xff;
 
-    const tmpBuffer = Buffer.from([value]);
-    this._data = Buffer.concat([this._data, tmpBuffer], this._data.length + 1);
-  }
+		const tmpBuffer = Buffer.from([value]);
+		this._data = Buffer.concat([this._data, tmpBuffer], this._data.length + 1);
+	}
 
-  public writeBytes(buffer: ByteArray): void {
-    const tmpBuffer = Buffer.from(buffer);
-    const totalLength = tmpBuffer.length + this._data.length;
-    this._data = Buffer.concat([this._data, tmpBuffer], totalLength);
-  }
+	public writeBytes(buffer: ByteArray): void {
+		const tmpBuffer = Buffer.from(buffer);
+		const totalLength = tmpBuffer.length + this._data.length;
+		this._data = Buffer.concat([this._data, tmpBuffer], totalLength);
+	}
 
-  public writeInt(value: number): void {
-    value = value & 0xffffffff;
+	public writeInt(value: number): void {
+		value = value & 0xffffffff;
 
-    const tmpBuffer = Buffer.allocUnsafe(4);
-    tmpBuffer.writeInt32BE(value);
-    this._data = Buffer.concat([this._data, tmpBuffer], this._data.length + tmpBuffer.length);
-  }
+		const tmpBuffer = Buffer.allocUnsafe(4);
+		tmpBuffer.writeInt32BE(value);
+		this._data = Buffer.concat([this._data, tmpBuffer], this._data.length + tmpBuffer.length);
+	}
 }
 
 export default ByteStream;

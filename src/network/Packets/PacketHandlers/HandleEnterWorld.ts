@@ -1,0 +1,23 @@
+import GameServer from "../../../app";
+import ByteStream from "../../ByteStream";
+import IPacketHandler from "../../Interfaces/IPacketHandler";
+import C2S_EnterWorld from "../C2S/C2S_EnterWorld";
+
+class HandleEnterWorld implements IPacketHandler<C2S_EnterWorld> {
+	public get name() {
+		return C2S_EnterWorld.name;
+	}
+
+	public handlePacket(clientId: number, req: C2S_EnterWorld): void {
+		const connection = GameServer.networkHandler.getConnection(clientId);
+
+		connection.send(
+			Buffer.from([
+				0x00, 0x27, 0x22, 0x25, 0x24, 0x08, 0x00, 0xc3, 0x62, 0x35, 0x00, 0xd6, 0x5a, 0x89, 0x03, 0x00, 0x04, 0x00, 0x00, 0x66, 0xd3, 0x4b,
+				0x43, 0x0f, 0x1c, 0x58, 0x43, 0x65, 0x21, 0x31, 0x45, 0x50, 0x36, 0x00, 0x00, 0xd4, 0x00, 0x00, 0xc0, 0x00, 0x00,
+			])
+		);
+	}
+}
+
+export default HandleEnterWorld;

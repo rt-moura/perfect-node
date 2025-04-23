@@ -1,11 +1,14 @@
 enum GamePacketID {
-  S2C_ServerInfo = 0x01,
-  C2S_LoginAnnounce = 0x02,
-  S2C_SMKey = 0x03,
-  C2S_CMKey = 0x03,
-  S2C_OnlineAnnounce = 0x04,
-  C2S_KeepAlive = 0x5a,
-  C2S_RoleList = 0x52,
+	S2C_ServerInfo = 0x01,
+	C2S_LoginAnnounce = 0x02,
+	S2C_SMKey = 0x03,
+	C2S_CMKey = 0x03,
+	S2C_OnlineAnnounce = 0x04,
+	C2S_KeepAlive = 0x5a,
+	C2S_RoleList = 0x52,
+	C2S_SelectRole = 0x46,
+	C2S_EnterWorld = 0x48,
+	C2S_WorldRequest = 0x22,
 }
 
 export default GamePacketID;
